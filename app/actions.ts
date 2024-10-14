@@ -44,12 +44,30 @@ export const signInAction = async (formData: FormData) => {
     email,
     password,
   });
-
+  
   if (error) {
     return encodedRedirect("error", "/sign-in", error.message);
   }
+    
+  const { data } = await supabase
+  .from('role')
+  .select('role')
+  .eq('email', email)
 
-  return redirect("/protected");
+  if(data != null && data[0].role == 'Student') {
+    return redirect("/student");
+  }
+  else if(data != null && data[0].role == 'Professor') {
+    return redirect("/professor")
+  }
+  else {
+    return redirect("/manager")
+  }
+
+};
+
+export const nextAction = async () => {
+  return redirect("/student/next");
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
