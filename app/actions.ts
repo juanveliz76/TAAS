@@ -44,26 +44,23 @@ export const signInAction = async (formData: FormData) => {
     email,
     password,
   });
-  
+
   if (error) {
     return encodedRedirect("error", "/sign-in", error.message);
   }
-    
+
   const { data } = await supabase
-  .from('role')
-  .select('role')
-  .eq('email', email)
+    .from("role")
+    .select("role")
+    .eq("email", email);
 
-  if(data != null && data[0].role == 'Student') {
+  if (data != null && data[0].role == "Student") {
     return redirect("/student");
+  } else if (data != null && data[0].role == "Professor") {
+    return redirect("/professor");
+  } else {
+    return redirect("/manager");
   }
-  else if(data != null && data[0].role == 'Professor') {
-    return redirect("/professor")
-  }
-  else {
-    return redirect("/manager")
-  }
-
 };
 
 export const nextAction = async () => {
@@ -145,4 +142,37 @@ export const signOutAction = async () => {
   const supabase = createClient();
   await supabase.auth.signOut();
   return redirect("/sign-in");
+};
+
+export async function getCourseDetails(course_code: string) {
+  const supabase = createClient();
+  // Query Supabase to get the course by its course code
+  const { data, error } = await supabase
+    .from("courses")
+    .select("course_code, has_professor") // Select relevant fields
+    .eq("course_code", course_code)
+    .single();
+
+  if (error) {
+    console.error("Error fetching course details:", error);
+    return null;
+  }
+
+  console.log(data);
+  return data; // Returns course details including the boolean column
+}
+
+export const getCourses = async () => {
+  const supabase = createClient();
+  try {
+    const { data, error } = await supabase.from("courses").select();
+    if (error) {
+      throw error;
+    }
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    return [];
+  }
 };
