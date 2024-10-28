@@ -176,3 +176,42 @@ export const getCourses = async () => {
     return [];
   }
 };
+
+export const selectClassesAction = async () => {
+  return redirect("professor/select-classes");
+};
+export const selectTAsPreference = async () => {
+  return redirect("professor/select-TA-preference"); // Redirects to the page for selecting TAs
+};
+export const confirmSubmit = async () => {
+  return redirect("professor/select-classes/confirm_submit")
+}
+
+// Fetch Student Data Action
+export const fetchStudentDataAction = async () => {
+  const supabase = createClient();
+  const { data, error } = await supabase.from('student').select('*');
+
+  if (error) {
+    console.error("Error fetching students:", error.message);
+    return { error: "Failed to fetch students." };
+  }
+
+  return data;
+};
+
+export const fetchProfessorPreferencesAction = async (professorName: string) => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("professor_class_preferences")
+    .select('professor')
+    .eq('professor', professorName)
+    .single();
+
+  if (error) {
+    console.error("Error fetching professor preferences:", error.message);
+    return { hasPreferences: false };
+  }
+
+  return { hasPreferences: Boolean(data) };
+};
