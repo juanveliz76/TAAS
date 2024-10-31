@@ -4,6 +4,7 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -54,7 +55,12 @@ export const signInAction = async (formData: FormData) => {
     .select("role")
     .eq("email", email);
 
-  if (data != null && data[0].role == "Student") {
+  if(data != null && data[0].role == 'Student') {
+    const { data } = await supabase
+    .from('student')
+    .select('profile_complete')
+    .eq('email', email)
+
     return redirect("/student");
   } else if (data != null && data[0].role == "Professor") {
     return redirect("/professor");
@@ -63,9 +69,53 @@ export const signInAction = async (formData: FormData) => {
   }
 };
 
-export const nextAction = async () => {
-  return redirect("/student/next");
+export const studentUpdates = async () => {
+  return redirect("/student/updates");
 };
+
+export const studentPref = async () => {
+  //setUpdates("student@ufl.edu",travel);
+  return redirect("/student/preferences");
+};
+
+export const studentWelcome = async () => {
+  return redirect("/student");
+};
+
+export const setUpdates = async (email: string, t: string) => {
+  const supabase = createClient();
+
+  const { } = await supabase
+    .from('student')
+    .insert({'travel': t}) 
+    .eq('email', email)
+}
+
+export async function getUpdates(email: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+  .from('student')
+  .select('travel, research_interests') 
+  .eq('email', email)
+  
+  return data;
+}
+
+export async function getStudentPref(email: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+  .from('student_pref')
+  .select('name,preference')
+  .eq('email', email)
+  
+  return data;
+}
+
+export async function addPref(email: string) {
+
+}
 
 export const forgotPasswordAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
