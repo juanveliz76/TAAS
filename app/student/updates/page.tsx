@@ -5,38 +5,53 @@ import { Button } from "@/components/ui/button"
 import { SubmitButton } from "@/components/submit-button";
 import { Textarea } from "@/components/ui/textarea"
 import { useEffect, useState } from "react";
-import { setUpdates, getUpdates } from "@/app/actions";
+import { setUpdates, getUpdates, setUpdatesResearch } from "@/app/actions";
 import { Checkbox } from "@/components/ui/checkbox"
+import { CheckedState } from "@radix-ui/react-checkbox";
 
 
-const updates = async () => {
+export default function updates() {
   const [t, setT] = useState("");
   const [AIML, setAIML] = useState(false);
-  console.log(AIML);
-  const old = await getUpdates("student@ufl.edu");
+  const [AIMLstring, getAIML] = useState("");
+  const [old, setOld] = useState("");
+
+  useEffect(() => {
+    // Fetch the courses data when the component mounts
+    const fetchData = async () => {
+      const updatesOld = await getUpdates("student@ufl.edu");
+      if(updatesOld) {
+        setOld(updatesOld[0].travel);
+        setAIML(updatesOld[0].AIML);
+      }
+
+    };
+    fetchData();
+  }, []);
 
   function sub() {
-    useEffect(() => {
+    //useEffect(() => {
       const writeData = async () => {
-        console.log(t);
         await setUpdates("student@ufl.edu", t);
+        await setUpdatesResearch("student@ufl.edu", "AIML", AIML);
       };
       writeData();
-    }, []);
+      studentPref();
+    //}, []);
   }
 
   function place(x: number) {
     if (x == 1 && old) {
-      return old[0].travel;
+      return old;
     }
-    return null
+    return "x"
   }
 
   return (
-    <form onSubmit={sub}>
+    <form>
       <div className="flex items-center space-x-2">
-        <Checkbox id="AIML" />
-        <label onChange={(e) => setAIML(e.bubbles)}
+        <Checkbox id="AIML" checked={AIML} onCheckedChange={setAIML as (checked: CheckedState) => void} />
+        <label
           htmlFor="AIML"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
@@ -67,11 +82,9 @@ const updates = async () => {
       <br></br>
       <br></br>
       <div className="grid w-full gap-2">
-        <Textarea value={place(1)} placeholder="List any travel plans for the current semester." onChange={(e) => setT(e.target.value)}/>
-        <SubmitButton pendingText="Saving" formAction={studentPref}>Save</SubmitButton>
+        <Textarea placeholder="List any travel plans for the current semester." onChange={(e) => setT(e.target.value)}/>
+        <SubmitButton pendingText="Saving" formAction={sub}>Save</SubmitButton>
       </div>
     </form>
   )
 }
-
-export default updates;

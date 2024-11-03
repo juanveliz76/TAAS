@@ -87,7 +87,16 @@ export const setUpdates = async (email: string, t: string) => {
 
   const { } = await supabase
     .from('student')
-    .insert({'travel': t}) 
+    .update({travel: t}) 
+    .eq('email', email)
+}
+
+export const setUpdatesResearch = async (email: string, r: string, t: boolean) => {
+  const supabase = createClient();
+
+  const { } = await supabase
+    .from('student')
+    .update({AIML: t}) 
     .eq('email', email)
 }
 
@@ -96,7 +105,7 @@ export async function getUpdates(email: string) {
 
   const { data, error } = await supabase
   .from('student')
-  .select('travel, research_interests') 
+  .select('travel, AIML') 
   .eq('email', email)
   
   return data;
@@ -113,8 +122,21 @@ export async function getStudentPref(email: string) {
   return data;
 }
 
-export async function addPref(email: string) {
+export async function addPref(email: string, course: string, pref: string) {
+  const supabase = createClient();
 
+  const num = 1
+  if(pref="Highly prefered") {
+    const num = 3;
+  }
+  else if(pref="Somewhat prefered") {
+    const num = 2;
+  }
+
+  const { } = await supabase
+    .from('student_pref')
+    .update({CAP5100: num}) 
+    .eq('email', email)
 }
 
 export const forgotPasswordAction = async (formData: FormData) => {
