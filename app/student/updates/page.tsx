@@ -17,7 +17,6 @@ export default function updates() {
   const [old, setOld] = useState("");
 
   useEffect(() => {
-    // Fetch the courses data when the component mounts
     const fetchData = async () => {
       const updatesOld = await getUpdates("student@ufl.edu");
       if(updatesOld) {
@@ -83,7 +82,7 @@ export default function updates() {
       <br></br>
       <div className="grid w-full gap-2">
         <Textarea placeholder="List any travel plans for the current semester." onChange={(e) => setT(e.target.value)}/>
-        <SubmitButton pendingText="Saving" formAction={sub}>Save</SubmitButton>
+        <SubmitButton pendingText="Saving.." formAction={sub}>Save</SubmitButton>
       </div>
     </form>
   )

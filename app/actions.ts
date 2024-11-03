@@ -122,21 +122,15 @@ export async function getStudentPref(email: string) {
   return data;
 }
 
-export async function addPref(email: string, course: string, pref: string) {
+export async function addPref(email: string, course: string, pref: number) {
   const supabase = createClient();
-
-  const num = 1
-  if(pref="Highly prefered") {
-    const num = 3;
-  }
-  else if(pref="Somewhat prefered") {
-    const num = 2;
-  }
 
   const { } = await supabase
     .from('student_pref')
-    .update({CAP5100: num}) 
+    .update({preference: pref}) 
     .eq('email', email)
+    .eq('name', course)
+  
 }
 
 export const forgotPasswordAction = async (formData: FormData) => {
