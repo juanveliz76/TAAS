@@ -20,7 +20,7 @@ export default function updates() {
     const fetchData = async () => {
       const updatesOld = await getUpdates("student@ufl.edu");
       if(updatesOld) {
-        setOld(updatesOld[0].travel);
+        setT(updatesOld[0].travel);
         setAIML(updatesOld[0].AIML);
       }
 
@@ -81,7 +81,7 @@ export default function updates() {
       <br></br>
       <br></br>
       <div className="grid w-full gap-2">
-        <Textarea placeholder="List any travel plans for the current semester." onChange={(e) => setT(e.target.value)}/>
+        <Textarea value = {t} placeholder="List any travel plans for the current semester." onChange={(e) => setT(e.target.value)}/>
         <SubmitButton pendingText="Saving.." formAction={sub}>Save</SubmitButton>
       </div>
     </form>

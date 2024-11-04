@@ -115,21 +115,28 @@ export async function getStudentPref(email: string) {
   const supabase = createClient();
 
   const { data, error } = await supabase
-  .from('student_pref')
-  .select('name,preference')
-  .eq('email', email)
+  .from('student_class_preference')
+  .select('course_code, preference')
+  .eq('student_email', email)
   
   return data;
 }
 
 export async function addPref(email: string, course: string, pref: number) {
   const supabase = createClient();
+  //console.log(email, course, pref)
 
-  const { } = await supabase
-    .from('student_pref')
+  const { data } = await supabase
+    .from('student_class_preference')
     .update({preference: pref}) 
-    .eq('email', email)
-    .eq('name', course)
+    .eq('student_email', email)
+    .eq('course_code', course)
+
+  if(data == null) {
+    const {  } = await supabase
+    .from('student_class_preference')
+    .insert({ student_email: email, course_code: course, preference: pref })
+  }
   
 }
 

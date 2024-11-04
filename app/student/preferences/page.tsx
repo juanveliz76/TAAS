@@ -30,7 +30,7 @@ async function getData(): Promise<course[]> {
   else {
     return [
       {
-        name: "0",
+        course_code: "0",
         preference: 0
       },
       // ...
@@ -42,8 +42,8 @@ export default function preferences() {
   const [c, setC] = useState("")
   const [r, setR] = useState("")
   const [data, setData] = useState<course[]>([
-    { name: '', preference: null },
-    { name: '', preference: null },
+    { course_code: '', preference: null },
+    { course_code: '', preference: null },
   ]);
 
   //const data = await getData()
