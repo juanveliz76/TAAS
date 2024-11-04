@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import preferences from "./student/preferences/page";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -128,7 +129,7 @@ export async function addPref(email: string, course: string, pref: number) {
 
   const { data } = await supabase
     .from('student_class_preference')
-    .update({preference: pref}) 
+    .select('preference') 
     .eq('student_email', email)
     .eq('course_code', course)
 
@@ -136,6 +137,13 @@ export async function addPref(email: string, course: string, pref: number) {
     const {  } = await supabase
     .from('student_class_preference')
     .insert({ student_email: email, course_code: course, preference: pref })
+  }
+  else {
+    const { } = await supabase
+    .from('student_class_preference')
+    .update({preference: pref}) 
+    .eq('student_email', email)
+    .eq('course_code', course)
   }
   
 }
