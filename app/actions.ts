@@ -133,17 +133,17 @@ export async function addPref(email: string, course: string, pref: number) {
     .eq('student_email', email)
     .eq('course_code', course)
 
-  if(data == null) {
-    const {  } = await supabase
-    .from('student_class_preference')
-    .insert({ student_email: email, course_code: course, preference: pref })
-  }
-  else {
+  if(data?.length != 0) {
     const { } = await supabase
     .from('student_class_preference')
     .update({preference: pref}) 
     .eq('student_email', email)
     .eq('course_code', course)
+  }
+  else {
+    const {  } = await supabase
+    .from('student_class_preference')
+    .insert({ student_email: email, course_code: course, preference: pref })
   }
   
 }

@@ -73,7 +73,7 @@ export default function preferences() {
           <div className="d-flex justify-content-center">
             <Select name="select1" onValueChange={(e) => setC(e)}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select a course" />
+                <SelectValue placeholder="Select a course"/>
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
