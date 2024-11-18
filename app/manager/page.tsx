@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getCourses } from "@/app/actions";
+import { createAdditionalUsers, getCourses } from "@/app/actions";
 import { useRouter } from "next/navigation"; // This allows you to programmatically navigate between pages
 import Link from "next/link"; // Use Link for dynamic routing
 
@@ -23,7 +23,7 @@ export default function ManagerPage() {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Manager Dashboard</h1>
       <div>
-        <h2 className="text-xl font-semibold mb-2">Courses</h2>
+        <h2 className="text-xl font-semibold mb-2">Fall 2024: Courses</h2>
         {/* Table to display courses */}
         {courses ? (
           <table className="min-w-full border border-gray-300">
@@ -51,6 +51,7 @@ export default function ManagerPage() {
           "Loading..."
         )}
       </div>
+
     </div>
   );
 }

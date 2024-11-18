@@ -163,7 +163,7 @@ export async function getCourseDetails(course_code: string) {
 }
 
 export const getCourses = async () => {
-  const supabase = createClient();
+  const supabase = await createClient();
   try {
     const { data, error } = await supabase.from("courses").select();
     if (error) {
@@ -173,6 +173,242 @@ export const getCourses = async () => {
     return data;
   } catch (error) {
     console.error("Error fetching courses:", error);
+    return [];
+  }
+};
+
+export async function getProfessorPreferences(course_code: string) {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("professor_class_preference")
+    .select(
+      `
+      professor,
+      preference
+      `,
+    )
+    .eq("course_code", course_code);
+
+  if (error) {
+    console.error("Error fetching professor preferences:", error);
+    return null;
+  }
+  return data;
+}
+
+export async function toggleProfessorAssignment(
+  course_code: string,
+  professor: string,
+) {
+  const supabase = createClient();
+
+  // Check if the row exists
+  const { data: existingData, error: checkError } = await supabase
+    .from("professor_course")
+    .select()
+    .eq("course_code", course_code)
+    .eq("professor", professor);
+
+  if (checkError && checkError.code !== "PGRST104") {
+    console.error("Error checking assignment:", checkError.message);
+    return;
+  }
+
+  console.log("Existing data:", existingData);
+
+  if (existingData && existingData.length > 0) {
+    // Row exists, so delete it
+    console.log("ROW EXIST ----------------------");
+    const { error: deleteError } = await supabase
+      .from("professor_course")
+      .delete()
+      .eq("course_code", course_code)
+      .eq("professor", professor);
+
+    if (deleteError)
+      console.error("Error removing assignment:", deleteError.message);
+  } else {
+    // Row does not exist, so insert it
+    console.log("ROW DOES NOT EXIST ----------------------");
+    const { error: insertError } = await supabase
+      .from("professor_course")
+      .insert({ course_code: course_code, professor: professor });
+
+    if (insertError)
+      console.error("Error adding assignment:", insertError.message);
+  }
+}
+
+export async function isProfessorAssigned(
+  course_code: string,
+  professor: string,
+) {
+  const supabase = createClient();
+
+  // Check if the row exists
+  const { data, error } = await supabase
+    .from("professor_course")
+    .select()
+    .eq("course_code", course_code)
+    .eq("professor", professor);
+
+  if (error) {
+    console.error("Error checking assignment:", error.message);
+    return false; // If there's an error, return false
+  }
+
+  return data; // Return true if data exists, false otherwise
+}
+
+export async function getAssignedProfessors(course_code: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("professor_course")
+    .select("professor")
+    .eq("course_code", course_code);
+
+  if (error) {
+    console.error("Error fetching assigned professors:", error.message);
+    return [];
+  }
+
+  return data;
+}
+
+//for student assignments
+
+export async function getStudentPreferences(course_code: string) {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("student_class_preference")
+    .select(
+      `
+    student_email,
+    preference
+    `,
+    )
+    .eq("course_code", course_code);
+
+  if (error) {
+    console.error("Error fetching student preferences:", error.message);
+    return [];
+  }
+
+  return data;
+}
+
+export async function getAssignedStudents(course_code: string) {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("student_course")
+    .select("student_email")
+    .eq("course_code", course_code);
+
+  if (error) {
+    console.error("Error fetching assigned students:", error.message);
+    return [];
+  }
+
+  return data;
+}
+
+export async function toggleStudentAssignment(
+  course_code: string,
+  student_email: string,
+) {
+  const supabase = createClient();
+
+  // Check if student is already assigned to the course
+  const { data: assignedData, error: checkError } = await supabase
+    .from("student_course")
+    .select()
+    .eq("course_code", course_code)
+    .eq("student_email", student_email);
+
+  if (checkError) {
+    console.error("Error checking assignment:", checkError.message);
+    return;
+  }
+
+  if (assignedData && assignedData.length > 0) {
+    // Student is assigned; remove assignment but keep score
+    const { error: deleteError } = await supabase
+      .from("student_course")
+      .delete()
+      .eq("course_code", course_code)
+      .eq("student_email", student_email);
+
+    if (deleteError) {
+      console.error("Error removing assignment:", deleteError.message);
+      return;
+    }
+  } else {
+    // Student is not assigned; assign and check score
+    const { error: insertError } = await supabase
+      .from("student_course")
+      .insert({ course_code, student_email });
+
+    if (insertError) {
+      console.error("Error assigning student:", insertError.message);
+      return;
+    }
+
+    // Check if a score exists in `student_course_score`
+    const { data: scoreData, error: scoreError } = await supabase
+      .from("student_course_score")
+      .select()
+      .eq("course_code", course_code)
+      .eq("student_email", student_email);
+
+    if (scoreError && scoreError.code !== "PGRST104") {
+      console.error("Error fetching student score:", scoreError.message);
+      return;
+    }
+
+    // If no score exists, set an initial score (if needed)
+    if (!scoreData) {
+      const { error: initialScoreError } = await supabase
+        .from("student_course_score")
+        .insert({
+          course_code: course_code,
+          student_email: student_email,
+          score: 0,
+        });
+
+      if (initialScoreError) {
+        console.error(
+          "Error setting initial score:",
+          initialScoreError.message,
+        );
+      }
+    }
+  }
+}
+
+export const getStudentScores = async (courseCode: string) => {
+  const supabase = createClient();
+  try {
+    const { data, error } = await supabase
+      .from("student_course_score") // Replace with your actual table name
+      .select(
+        `
+        student_email,
+        score
+        `,
+      )
+      .eq("course_code", courseCode);
+
+    if (error) {
+      console.error("Error fetching student scores:", error);
+      return [];
+    }
+
+    console.log(data);
+
+    return data;
+  } catch (err) {
+    console.error("An unexpected error occurred:", err);
     return [];
   }
 };
