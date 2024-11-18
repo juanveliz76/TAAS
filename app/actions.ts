@@ -56,11 +56,11 @@ export const signInAction = async (formData: FormData) => {
     .select("role")
     .eq("email", email);
 
-  if(data != null && data[0].role == 'Student') {
+  if (data != null && data[0].role == "Student") {
     const { data } = await supabase
-    .from('student')
-    .select('profile_complete')
-    .eq('email', email)
+      .from("student")
+      .select("profile_complete")
+      .eq("email", email);
 
     return redirect("/student");
   } else if (data != null && data[0].role == "Professor") {
@@ -86,29 +86,33 @@ export const studentWelcome = async () => {
 export const setUpdates = async (email: string, t: string) => {
   const supabase = createClient();
 
-  const { } = await supabase
-    .from('student')
-    .update({travel: t}) 
-    .eq('email', email)
-}
+  const {} = await supabase
+    .from("student")
+    .update({ travel: t })
+    .eq("email", email);
+};
 
-export const setUpdatesResearch = async (email: string, r: string, t: boolean) => {
+export const setUpdatesResearch = async (
+  email: string,
+  r: string,
+  t: boolean,
+) => {
   const supabase = createClient();
 
-  const { } = await supabase
-    .from('student')
-    .update({AIML: t}) 
-    .eq('email', email)
-}
+  const {} = await supabase
+    .from("student")
+    .update({ AIML: t })
+    .eq("email", email);
+};
 
 export async function getUpdates(email: string) {
   const supabase = createClient();
 
   const { data, error } = await supabase
-  .from('student')
-  .select('travel, AIML') 
-  .eq('email', email)
-  
+    .from("student")
+    .select("travel, AIML")
+    .eq("email", email);
+
   return data;
 }
 
@@ -116,10 +120,10 @@ export async function getStudentPref(email: string) {
   const supabase = createClient();
 
   const { data, error } = await supabase
-  .from('student_class_preference')
-  .select('course_code, preference')
-  .eq('student_email', email)
-  
+    .from("student_class_preference")
+    .select("course_code, preference")
+    .eq("student_email", email);
+
   return data;
 }
 
@@ -128,24 +132,22 @@ export async function addPref(email: string, course: string, pref: number) {
   //console.log(email, course, pref)
 
   const { data } = await supabase
-    .from('student_class_preference')
-    .select('preference') 
-    .eq('student_email', email)
-    .eq('course_code', course)
+    .from("student_class_preference")
+    .select("preference")
+    .eq("student_email", email)
+    .eq("course_code", course);
 
-  if(data?.length != 0) {
-    const { } = await supabase
-    .from('student_class_preference')
-    .update({preference: pref}) 
-    .eq('student_email', email)
-    .eq('course_code', course)
+  if (data?.length != 0) {
+    const {} = await supabase
+      .from("student_class_preference")
+      .update({ preference: pref })
+      .eq("student_email", email)
+      .eq("course_code", course);
+  } else {
+    const {} = await supabase
+      .from("student_class_preference")
+      .insert({ student_email: email, course_code: course, preference: pref });
   }
-  else {
-    const {  } = await supabase
-    .from('student_class_preference')
-    .insert({ student_email: email, course_code: course, preference: pref })
-  }
-  
 }
 
 export const forgotPasswordAction = async (formData: FormData) => {
@@ -492,22 +494,22 @@ export const getStudentScores = async (courseCode: string) => {
     console.error("An unexpected error occurred:", err);
     return [];
   }
-  
- 
+};
 export const selectClassesAction = async () => {
   return redirect("professor/select-classes");
 };
+
 export const selectTAsPreference = async () => {
   return redirect("professor/select-TA-preference"); // Redirects to the page for selecting TAs
 };
 export const confirmSubmit = async () => {
-  return redirect("professor/select-classes/confirm_submit")
-}
+  return redirect("professor/select-classes/confirm_submit");
+};
 
 // Fetch Student Data Action
 export const fetchStudentDataAction = async () => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('student').select('*');
+  const { data, error } = await supabase.from("student").select("*");
 
   if (error) {
     console.error("Error fetching students:", error.message);
@@ -517,12 +519,14 @@ export const fetchStudentDataAction = async () => {
   return data;
 };
 
-export const fetchProfessorPreferencesAction = async (professorName: string) => {
+export const fetchProfessorPreferencesAction = async (
+  professorName: string,
+) => {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("professor_class_preferences")
-    .select('professor')
-    .eq('professor', professorName)
+    .select("professor")
+    .eq("professor", professorName)
     .single();
 
   if (error) {
