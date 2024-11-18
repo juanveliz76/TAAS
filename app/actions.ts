@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import preferences from "./student/preferences/page";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -87,7 +88,16 @@ export const setUpdates = async (email: string, t: string) => {
 
   const { } = await supabase
     .from('student')
-    .insert({'travel': t}) 
+    .update({travel: t}) 
+    .eq('email', email)
+}
+
+export const setUpdatesResearch = async (email: string, r: string, t: boolean) => {
+  const supabase = createClient();
+
+  const { } = await supabase
+    .from('student')
+    .update({AIML: t}) 
     .eq('email', email)
 }
 
@@ -96,7 +106,7 @@ export async function getUpdates(email: string) {
 
   const { data, error } = await supabase
   .from('student')
-  .select('travel, research_interests') 
+  .select('travel, AIML') 
   .eq('email', email)
   
   return data;
@@ -106,15 +116,36 @@ export async function getStudentPref(email: string) {
   const supabase = createClient();
 
   const { data, error } = await supabase
-  .from('student_pref')
-  .select('name,preference')
-  .eq('email', email)
+  .from('student_class_preference')
+  .select('course_code, preference')
+  .eq('student_email', email)
   
   return data;
 }
 
-export async function addPref(email: string) {
+export async function addPref(email: string, course: string, pref: number) {
+  const supabase = createClient();
+  //console.log(email, course, pref)
 
+  const { data } = await supabase
+    .from('student_class_preference')
+    .select('preference') 
+    .eq('student_email', email)
+    .eq('course_code', course)
+
+  if(data?.length != 0) {
+    const { } = await supabase
+    .from('student_class_preference')
+    .update({preference: pref}) 
+    .eq('student_email', email)
+    .eq('course_code', course)
+  }
+  else {
+    const {  } = await supabase
+    .from('student_class_preference')
+    .insert({ student_email: email, course_code: course, preference: pref })
+  }
+  
 }
 
 export const forgotPasswordAction = async (formData: FormData) => {

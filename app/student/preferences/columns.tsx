@@ -2,17 +2,15 @@
  
 import { ColumnDef } from "@tanstack/react-table"
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type course = {
-  name: string
-  preference: 0 | 1 | 2 | 3
+  course_code: string
+  preference: 0 | 1 | 2 | 3 | null
 }
  
 export const columns: ColumnDef<course>[] = [
   {
-    accessorKey: "name",
-    header: "Name",
+    accessorKey: "course_code",
+    header: "Course",
   },
   {
     accessorKey: "preference",
