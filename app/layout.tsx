@@ -40,7 +40,6 @@ export default function RootLayout({
                   <Link href={"/"} className="text-lg hover:underline">
                     Teaching Assistant Assignment System
                   </Link>
-                  <DeployButton />
                 </div>
                 <div>{!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}</div>
               </div>
