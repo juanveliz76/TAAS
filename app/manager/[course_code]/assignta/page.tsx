@@ -44,24 +44,20 @@ export default function StudentPreferencesPage({
     const assignedStuds = await getAssignedStudents(cc);
     const scoresData = await getStudentScores(cc);
 
-    // Format scores for easier lookup
     const formattedScores = scoresData.reduce((acc, scoreObj) => {
       acc[scoreObj.student_email] = scoreObj.score;
       return acc;
     }, {} as { [key: string]: number });
 
-    // Separate unassigned and assigned students
     const unassignedStuds = allPreferences.filter(
       (pref) => !assignedStuds.some((assigned) => assigned.student_email === pref.student_email)
     );
 
-    // Merge preferences with assigned students
     const mergedAssigned = assignedStuds.map((assigned) => {
       const preference = allPreferences.find((pref) => pref.student_email === assigned.student_email)?.preference;
       return { ...assigned, preference: preference || "N/A" };
     });
 
-    // Sort by score in descending order
     const sortedUnassigned = unassignedStuds.sort(
       (a, b) => (formattedScores[b.student_email] || 0) - (formattedScores[a.student_email] || 0)
     );
@@ -77,42 +73,43 @@ export default function StudentPreferencesPage({
   const handleAssignToggle = async (studentEmail: string) => {
     if (!cc) return;
     await toggleStudentAssignment(cc, studentEmail);
-
-    // Refresh data immediately after toggling assignment
     await refreshData();
   };
 
   if (!cc) {
-    return <p>Loading...</p>;
+    return <p className="text-center mt-10">Loading...</p>;
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Student Assignment for Course: {cc}</h1>
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6 text-center">Student Assignment for Course: {cc}</h1>
 
-      <div className="flex gap-8">
+      <div className="flex flex-col md:flex-row gap-8">
         {/* Unassigned Students */}
-        <div className="w-1/2">
-          <h2 className="text-xl font-semibold mb-2">Unassigned Students</h2>
-          <table className="min-w-full border border-gray-300">
+        <div className="w-full md:w-1/2">
+          <h2 className="text-xl font-semibold mb-4 text-center">Unassigned Students</h2>
+          <table className="w-full border-collapse border border-gray-300">
             <thead>
               <tr>
-                <th className="py-2 px-4 border-b">Student Email</th>
-                <th className="py-2 px-4 border-b">Preference Level</th>
-                <th className="py-2 px-4 border-b">Smart Score</th>
-                <th className="py-2 px-4 border-b">Assign</th>
+                <th className="py-3 px-4 border-b border-gray-300 bg-gray-100">Student Email</th>
+                <th className="py-3 px-4 border-b border-gray-300 bg-gray-100">Preference Level</th>
+                <th className="py-3 px-4 border-b border-gray-300 bg-gray-100">Smart Score</th>
+                <th className="py-3 px-4 border-b border-gray-300 bg-gray-100">Assign</th>
               </tr>
             </thead>
             <tbody>
               {unassigned.map((item) => (
-                <tr key={item.student_email}>
-                  <td className="py-2 px-4 border-b">{item.student_email}</td>
-                  <td className="py-2 px-4 border-b">{item.preference}</td>
-                  <td className="py-2 px-4 border-b">{scores[item.student_email] || 0}</td>
-                  <td className="py-2 px-4 border-b">
-                    <Button onClick={() => handleAssignToggle(item.student_email)}
-                    className="bg-green-500 text-white hover:bg-green-600"
-                    >Assign</Button>
+                <tr key={item.student_email} className="hover:bg-gray-50">
+                  <td className="py-3 px-4 border-b">{item.student_email}</td>
+                  <td className="py-3 px-4 border-b">{item.preference}</td>
+                  <td className="py-3 px-4 border-b">{scores[item.student_email] || 0}</td>
+                  <td className="py-3 px-4 border-b">
+                    <Button
+                      onClick={() => handleAssignToggle(item.student_email)}
+                      className="bg-green-500 text-white hover:bg-green-600 px-4 py-2 rounded"
+                    >
+                      Assign
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -121,31 +118,30 @@ export default function StudentPreferencesPage({
         </div>
 
         {/* Assigned Students */}
-        <div className="w-1/2">
-          <h2 className="text-xl font-semibold mb-2">Assigned Students</h2>
-          <table className="min-w-full border border-gray-300">
+        <div className="w-full md:w-1/2">
+          <h2 className="text-xl font-semibold mb-4 text-center">Assigned Students</h2>
+          <table className="w-full border-collapse border border-gray-300">
             <thead>
               <tr>
-                <th className="py-2 px-4 border-b">Student Email</th>
-                <th className="py-2 px-4 border-b">Preference Level</th>
-                <th className="py-2 px-4 border-b">Smart Score</th>
-                <th className="py-2 px-4 border-b">Remove</th>
+                <th className="py-3 px-4 border-b border-gray-300 bg-gray-100">Student Email</th>
+                <th className="py-3 px-4 border-b border-gray-300 bg-gray-100">Preference Level</th>
+                <th className="py-3 px-4 border-b border-gray-300 bg-gray-100">Smart Score</th>
+                <th className="py-3 px-4 border-b border-gray-300 bg-gray-100">Remove</th>
               </tr>
             </thead>
             <tbody>
               {assigned.map((item) => (
-                <tr key={item.student_email}>
-                  <td className="py-2 px-4 border-b">{item.student_email}</td>
-                  <td className="py-2 px-4 border-b">{item.preference}</td>
-                  <td className="py-2 px-4 border-b">{scores[item.student_email] || 0}</td>
-                  <td className="py-2 px-4 border-b">
+                <tr key={item.student_email} className="hover:bg-gray-50">
+                  <td className="py-3 px-4 border-b">{item.student_email}</td>
+                  <td className="py-3 px-4 border-b">{item.preference}</td>
+                  <td className="py-3 px-4 border-b">{scores[item.student_email] || 0}</td>
+                  <td className="py-3 px-4 border-b">
                     <Button
                       onClick={() => handleAssignToggle(item.student_email)}
-                      className="bg-red-500 text-white hover:bg-red-600"
+                      className="bg-red-500 text-white hover:bg-red-600 px-4 py-2 rounded"
                     >
                       Remove
                     </Button>
-
                   </td>
                 </tr>
               ))}
@@ -156,7 +152,7 @@ export default function StudentPreferencesPage({
 
       <button
         onClick={() => router.push(`/manager/${cc}`)}
-        className="mt-6 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+        className="mt-8 px-6 py-3 bg-gray-500 text-white rounded hover:bg-gray-600 block mx-auto"
       >
         Go Back
       </button>
