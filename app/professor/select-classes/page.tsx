@@ -1,36 +1,35 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { fetchCourses } from "@/app/actions"; // Adjust the import path based on your file structure
+import { sendProfCoursePreferences } from "@/app/actions";
 
-// Sample list of classes to choose from
-const classes = [
-  "CEN 3031 - Introduction to Software Engineering",
-  "CIS 4301 - Information and Database Systems 1",
-  "COP 3502C - Programming Fundamentals 1",
-  "COP 3503C - Programming Fundamentals 2",
-  "MAS 3114 - Computational Linear Algebra",
-  "COP 4600 - Operating Systems",
-  "STA 3032 - Engineering Statistics",
-  "COP 4020 - Programming Language Concepts",
-];
+interface Course {
+  course_code: string;
+}
 
 export default function SelectClasses() {
-  const [selectedClasses, setSelectedClasses] = useState<string[]>(new Array(8).fill(""));
-  const [preferences, setPreferences] = useState<string[]>(new Array(8).fill(""));
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [preferences, setPreferences] = useState<string[]>([]);
+  const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
+  const professorEmail = "professor@ufl.edu"; // Replace with the logged-in professor's email dynamically
 
-  // Helper to determine which classes are available (i.e., not yet chosen)
-  const availableClasses = (currentIndex: number) => {
-    const usedClasses = selectedClasses.filter((_, index) => index !== currentIndex);
-    return classes.filter((cls) => !usedClasses.includes(cls));
-  };
+  useEffect(() => {
+    const fetchCoursesData = async () => {
+      const fetchedCourses: any[] | { error: string } = await fetchCourses();
 
-  const handleClassChange = (index: number, value: string) => {
-    const updatedClasses = [...selectedClasses];
-    updatedClasses[index] = value;
-    setSelectedClasses(updatedClasses);
-  };
+      if (Array.isArray(fetchedCourses)) {
+        setCourses(fetchedCourses);
+        setPreferences(new Array(fetchedCourses.length).fill(""));
+        setSelectedCourses(new Array(fetchedCourses.length).fill(""));
+      } else {
+        console.error(fetchedCourses.error);
+      }
+    };
+
+    fetchCoursesData();
+  }, []);
 
   const handlePreferenceChange = (index: number, value: string) => {
     const updatedPreferences = [...preferences];
@@ -38,34 +37,63 @@ export default function SelectClasses() {
     setPreferences(updatedPreferences);
   };
 
-  // Function to clear the selected class and preference for a specific index
-  const handleClear = (index: number) => {
-    const updatedClasses = [...selectedClasses];
-    const updatedPreferences = [...preferences];
-    updatedClasses[index] = "";
-    updatedPreferences[index] = "";
-    setSelectedClasses(updatedClasses);
-    setPreferences(updatedPreferences);
+  const handleCourseChange = (index: number, value: string) => {
+    const updatedSelectedCourses = [...selectedCourses];
+    updatedSelectedCourses[index] = value;
+    setSelectedCourses(updatedSelectedCourses);
   };
 
-  // Check if all classes and preferences are filled to enable/disable the submit button
-  const isSubmitDisabled = selectedClasses.some((cls) => cls === "") || preferences.some((pref) => pref === "");
+  const handleClearCourse = (index: number) => {
+    const updatedSelectedCourses = [...selectedCourses];
+    updatedSelectedCourses[index] = "";
+    setSelectedCourses(updatedSelectedCourses);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Selected Classes:", selectedClasses);
-    console.log("Preferences:", preferences);
+    const payload = preferences.map((preference, index) => ({
+      professor: professorEmail,
+      course_code: selectedCourses[index],
+      preference,
+      Preferences_Filled: true,
+    }));
 
-    setSubmitted(true);
+    try {
+      const { error } = await sendProfCoursePreferences(payload);
+
+      if (!error) {
+        console.log("Preferences successfully saved:", payload);
+        setSubmitted(true);
+      } else {
+        console.error("Failed to save preferences:", error.message);
+      }
+    } catch (error) {
+      console.error("An error occurred while saving preferences:", error);
+    }
   };
 
+  useEffect(() => {
+    if (submitted) {
+      setTimeout(() => {
+        window.location.href = "/professor/select-classes/confirm_submit";
+      }, 1000);
+    }
+  }, [submitted]);
+
   if (submitted) {
-    setTimeout(() => {
-      window.location.href = "/professor/select-classes/confirm_submit";
-    }, 1000);
     return <p className="text-blue-500">Redirecting to confirmation...</p>;
   }
+
+  if (!courses.length) {
+    return <p className="text-blue-500">Loading courses...</p>;
+  }
+
+  const availableCourses = (index: number) => {
+    return courses.filter(
+      (course) => !selectedCourses.includes(course.course_code) || selectedCourses[index] === course.course_code
+    );
+  };
 
   return (
     <div className="bg-blue-500 min-h-screen flex items-center justify-center">
@@ -73,73 +101,64 @@ export default function SelectClasses() {
         <h1 className="text-3xl font-bold mb-6 text-center">Select and Rank Classes</h1>
 
         <div className="flex flex-col gap-4">
-          {Array.from({ length: 8 }, (_, index) => (
+          {Array.from({ length: courses.length }, (_, index) => (
             <div key={index} className="flex flex-col gap-2">
-              <label htmlFor={`class-${index}`} className="text-lg font-medium">
-                Class {index + 1}
-              </label>
               <div className="flex items-center gap-2">
-                <select
-                  id={`class-${index}`}
-                  value={selectedClasses[index] || ""}
-                  onChange={(e) => handleClassChange(index, e.target.value)}
-                  className="p-2 border rounded-md flex-1"
-                  required
-                >
-                  <option value="" disabled>
-                    Select a class
-                  </option>
-                  {availableClasses(index).map((className, i) => (
-                    <option key={i} value={className}>
-                      {className}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  type="button"
-                  onClick={() => handleClear(index)}
-                  className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500 transition"
-                >
-                  Clear
-                </button>
+                <label htmlFor={`class-${index}`} className="text-lg font-medium flex-1">
+                  Class {index + 1}
+                </label>
+                {selectedCourses[index] && (
+                  <button
+                    type="button"
+                    className="text-sm text-red-500 underline"
+                    onClick={() => handleClearCourse(index)}
+                  >
+                    Clear
+                  </button>
+                )}
               </div>
+
+              <select
+                id={`class-${index}`}
+                value={selectedCourses[index] || ""}
+                onChange={(e) => handleCourseChange(index, e.target.value)}
+                className="p-2 border rounded-md flex-1"
+                required
+              >
+                <option value="" disabled>
+                  Select a course
+                </option>
+                {availableCourses(index).map((course) => (
+                  <option key={course.course_code} value={course.course_code}>
+                    {course.course_code}
+                  </option>
+                ))}
+              </select>
 
               <label htmlFor={`preference-${index}`} className="text-sm font-medium">
                 Preference
               </label>
-              <div className="flex items-center gap-2">
-                <select
-                  id={`preference-${index}`}
-                  value={preferences[index] || ""}
-                  onChange={(e) => handlePreferenceChange(index, e.target.value)}
-                  className="p-2 border rounded-md flex-1"
-                  required
-                >
-                  <option value="" disabled>
-                    Select preference
-                  </option>
-                  <option value="Not Preferred">Not Preferred</option>
-                  <option value="Somewhat Preferred">Somewhat Preferred</option>
-                  <option value="Highly Preferred">Highly Preferred</option>
-                </select>
-                <button
-                  type="button"
-                  onClick={() => handleClear(index)}
-                  className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500 transition"
-                >
-                  Clear
-                </button>
-              </div>
+              <select
+                id={`preference-${index}`}
+                value={preferences[index] || ""}
+                onChange={(e) => handlePreferenceChange(index, e.target.value)}
+                className="p-2 border rounded-md flex-1"
+                required
+              >
+                <option value="" disabled>
+                  Select preference
+                </option>
+                <option value="Not Preferred">Not Preferred</option>
+                <option value="Somewhat Preferred">Somewhat Preferred</option>
+                <option value="Highly Preferred">Highly Preferred</option>
+              </select>
             </div>
           ))}
         </div>
 
         <button
           type="submit"
-          className={`mt-6 p-2 rounded-lg text-white font-bold transition ${
-            isSubmitDisabled ? "bg-gray-400 cursor-not-allowed" : "bg-orange-500 hover:bg-orange-600"
-          }`}
-          disabled={isSubmitDisabled}
+          className="mt-6 p-2 rounded-lg text-white font-bold bg-orange-500 hover:bg-orange-600 transition"
         >
           Submit Preferences
         </button>
