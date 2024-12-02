@@ -1,16 +1,16 @@
 import Link from "next/link";
 
 const classes = [
-  { name: "Computer Science 101" },
-  { name: "Data Structures" },
-  { name: "Algorithms" },
-  { name: "Software Engineering" },
+  { name: "COP 4600 - Operating Systems" },
+  { name: "CIS 4301 - Information and Database Systems 1" },
+ // { name: "Algorithms" },
+ // { name: "Software Engineering" },
 ];
 
 export default function SelectTAPreferencePage() {
   const getRouteForClass = (className: string) => {
-    if (className === "Computer Science 101") return "/professor/select-TA-preference/1";
-    else if (className === "Data Structures") return "/professor/select-TA-preference/2";
+    if (className === "COP 4600 - Operating Systems") return "/professor/select-TA-preference/1";
+    else if (className === "CIS 4301 - Information and Database Systems 1") return "/professor/select-TA-preference/2";
     else if (className === "Algorithms") return "/professor/select-TA-preference/3";
     else if (className === "Software Engineering") return "/professor/select-TA-preference/4";
     return "#"; // Default route if no match
