@@ -617,3 +617,36 @@ export const fetchCurrentSemesterAction = async (): Promise<string | null> => {
     return null;
   }
 };
+
+export const fetchCourses = async () => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('courses').select('course_code');
+  if (error) {
+    console.error("Error fetching students:", error.message);
+    return { error: "Failed to fetch students." };
+  }
+  return data;
+};
+export const sendProfCoursePreferences = async (preferences: Array<{ professor: string; course_code: string; preference: string; Preferences_Filled: boolean }>) => {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('professor_class_preference')
+    .insert(preferences);
+  if (error) {
+      console.error("ERRORRR HERE", error.message);
+  }
+  
+  return { error };
+};
+export const fetchProfClassPrefDataAction = async () => {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from("professor_class_preference")
+    .select("course_code, preference"); // Fetch only course_code and preference
+  if (error) {
+    console.error("Error fetching preferences:", error.message);
+    return { error: "Failed to fetch preferences." };
+  }
+  return data;
+};
