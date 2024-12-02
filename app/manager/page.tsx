@@ -51,6 +51,7 @@ export default function ManagerPage() {
   };
 
   return (
+
     <div className="flex h-screen">
       {/* Sidebar */}
       <aside className="w-64 bg-gray-800 text-white flex flex-col p-6">

@@ -13,8 +13,14 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 export default function updates() {
   const [t, setT] = useState("");
   const [AIML, setAIML] = useState(false);
-  const [AIMLstring, getAIML] = useState("");
-  const [old, setOld] = useState("");
+  const [ALGO, setALGO] = useState(false);
+  const [BIO, setBIO] = useState(false);
+  const [CC, setCC] = useState(false);
+  const [CV, setCV] = useState(false);
+  const [D, setD] = useState(false);
+  const [G, setG] = useState(false);
+  const [HCI, setHCI] = useState(false);
+  const [N, setN] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,6 +28,14 @@ export default function updates() {
       if(updatesOld) {
         setT(updatesOld[0].travel);
         setAIML(updatesOld[0].AIML);
+        setALGO(updatesOld[0].ALGO);
+        setBIO(updatesOld[0].BIO);
+        setCC(updatesOld[0].CC);
+        setCV(updatesOld[0].CV);
+        setD(updatesOld[0].D);
+        setG(updatesOld[0].G);
+        setHCI(updatesOld[0].HCI);
+        setN(updatesOld[0].N);
       }
 
     };
@@ -32,22 +46,17 @@ export default function updates() {
     //useEffect(() => {
       const writeData = async () => {
         await setUpdates("student@ufl.edu", t);
-        await setUpdatesResearch("student@ufl.edu", "AIML", AIML);
+        await setUpdatesResearch("student@ufl.edu", AIML, ALGO, BIO, CC, CV, D, G, HCI, N);
       };
       writeData();
       studentPref();
     //}, []);
   }
 
-  function place(x: number) {
-    if (x == 1 && old) {
-      return old;
-    }
-    return "x"
-  }
-
   return (
     <form>
+      <div className="space-y-4">
+      <div className="flex flex-col space-y-2">
       <div className="flex items-center space-x-2">
         <Checkbox id="AIML" checked={AIML} onCheckedChange={setAIML as (checked: CheckedState) => void} />
         <label
@@ -56,27 +65,80 @@ export default function updates() {
           >
           AI/Machine Learning
         </label>
-        <Checkbox id="ALGO" />
+        </div>
+        <div className="flex items-center space-x-2">
+        <Checkbox id="ALGO" checked={ALGO} onCheckedChange={setALGO as (checked: CheckedState) => void} />
         <label
           htmlFor="ALGO"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
           Algorithms
         </label>
-        <Checkbox id="BIOINFORMATICS" />
+        </div>
+        <div className="flex items-center space-x-2">
+        <Checkbox id="BIO" checked={BIO} onCheckedChange={setBIO as (checked: CheckedState) => void}/>
         <label
-          htmlFor="BIOINFORMATICS"
+          htmlFor="BIO"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
           Bioinformatics
         </label>
-        <Checkbox id="CC" />
+        </div>
+        <div className="flex items-center space-x-2">
+        <Checkbox id="CC" checked={CC} onCheckedChange={setCC as (checked: CheckedState) => void} />
         <label
           htmlFor="CC"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
           Cloud Computing
         </label>
+        </div>
+        <div className="flex items-center space-x-2">
+        <Checkbox id="CV" checked={CV} onCheckedChange={setCV as (checked: CheckedState) => void} />
+        <label
+          htmlFor="CV"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+          Computer Vision
+        </label>
+        </div>
+        <div className="flex items-center space-x-2">
+        <Checkbox id="D" checked={D} onCheckedChange={setD as (checked: CheckedState) => void} />
+        <label
+          htmlFor="D"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+          Data
+        </label>
+        </div>
+        <div className="flex items-center space-x-2">
+        <Checkbox id="G" checked={G} onCheckedChange={setG as (checked: CheckedState) => void} />
+        <label
+          htmlFor="G"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+          Graphics
+        </label>
+        </div>
+        <div className="flex items-center space-x-2">
+        <Checkbox id="HCI" checked={HCI} onCheckedChange={setHCI as (checked: CheckedState) => void} />
+        <label
+          htmlFor="HCI"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+          Human Computer Interaction
+        </label>
+        </div>
+        <div className="flex items-center space-x-2">
+        <Checkbox id="N" checked={N} onCheckedChange={setN as (checked: CheckedState) => void} />
+        <label
+          htmlFor="N"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+          Networking
+        </label>
+      </div>
+      </div>
       </div>
       <br></br>
       <br></br>
