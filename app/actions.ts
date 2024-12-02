@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import preferences from "./student/preferences/page";
+import { v4 as uuidv4 } from 'uuid';
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -92,12 +93,12 @@ export const setUpdates = async (email: string, t: string) => {
     .eq('email', email)
 }
 
-export const setUpdatesResearch = async (email: string, r: string, t: boolean) => {
+export const setUpdatesResearch = async (email: string, AIML: boolean, ALGO: boolean, BIO: boolean, CC: boolean, CV: boolean, D: boolean, G: boolean, HCI: boolean, N:boolean) => {
   const supabase = createClient();
 
   const { } = await supabase
     .from('student')
-    .update({AIML: t}) 
+    .update({AIML: AIML, ALGO: ALGO, BIO: BIO, CC: CC, CV: CV, D: D, G: G, HCI: HCI, N: N}) 
     .eq('email', email)
 }
 
@@ -106,7 +107,7 @@ export async function getUpdates(email: string) {
 
   const { data, error } = await supabase
   .from('student')
-  .select('travel, AIML') 
+  .select('travel, AIML, ALGO, BIO, CC, CV, D, G, HCI, N') 
   .eq('email', email)
   
   return data;
@@ -125,13 +126,16 @@ export async function getStudentPref(email: string) {
 
 export async function addPref(email: string, course: string, pref: number) {
   const supabase = createClient();
-  //console.log(email, course, pref)
+  console.log(email, course, pref)
 
   const { data } = await supabase
     .from('student_class_preference')
     .select('preference') 
     .eq('student_email', email)
     .eq('course_code', course)
+
+
+    console.log(data?.length)
 
   if(data?.length != 0) {
     const { } = await supabase
@@ -141,9 +145,11 @@ export async function addPref(email: string, course: string, pref: number) {
     .eq('course_code', course)
   }
   else {
-    const {  } = await supabase
+    const {error} = await supabase
     .from('student_class_preference')
     .insert({ student_email: email, course_code: course, preference: pref })
+
+    console.log(error)
   }
   
 }

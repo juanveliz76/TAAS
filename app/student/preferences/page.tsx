@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select"
 import { randomBytes, randomFill } from 'crypto';
 import { isNullOrUndefined } from 'util';
+import { Button } from '@/components/ui/button';
 
 async function getData(): Promise<course[]> {
   // Fetch data from your API here.
@@ -80,6 +81,27 @@ export default function preferences() {
                   <SelectItem value="CAP5100">CAP5100</SelectItem>
                   <SelectItem value="COP3530">COP3530</SelectItem>
                   <SelectItem value="COP4600">COP4600</SelectItem>
+                  <SelectItem value="CAP4730">CAP4730</SelectItem>
+                  <SelectItem value="CAP4773">CAP4773</SelectItem>
+                  <SelectItem value="CDA3101">CDA3101</SelectItem>
+                  <SelectItem value="CDA4630">CDA4630</SelectItem>
+                  <SelectItem value="CEN3031">CEN3031</SelectItem>
+                  <SelectItem value="CEN3913">CEN3913</SelectItem>
+                  <SelectItem value="CEN4072">CEN4072</SelectItem>
+                  <SelectItem value="CEN4721">CEN4721</SelectItem>
+                  <SelectItem value="CEN4914">CEN4914</SelectItem>
+                  <SelectItem value="CGS3065">CGS3065</SelectItem>
+                  <SelectItem value="CIS4301">CIS4301</SelectItem>
+                  <SelectItem value="CIS4905">CIS4905</SelectItem>
+                  <SelectItem value="CIS4930">CIS4930</SelectItem>
+                  <SelectItem value="CNT4007">CNT4007</SelectItem>
+                  <SelectItem value="COP2800">COP2800</SelectItem>
+                  <SelectItem value="COP3275">COP3275</SelectItem>
+                  <SelectItem value="COP3502">COP3502</SelectItem>
+                  <SelectItem value="COP3503">COP3503</SelectItem>
+                  <SelectItem value="COP4020">COP4020</SelectItem>
+                  <SelectItem value="COT3100">COT3100</SelectItem>
+                  <SelectItem value="COT4501">COT4501</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -90,18 +112,18 @@ export default function preferences() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="3">Highly prefered</SelectItem>
-                  <SelectItem value="2">Somewhat prefered</SelectItem>
-                  <SelectItem value="1">Neither prefered nor undesired</SelectItem>
+                  <SelectItem value="3">Highly prefered (3)</SelectItem>
+                  <SelectItem value="2">Somewhat prefered (2)</SelectItem>
+                  <SelectItem value="1">Neither prefered nor undesired (1)</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
             <br></br>
-            <SubmitButton pendingText="Adding.." formAction={add}>Add</SubmitButton>
+            <Button name = "add" formAction={add}>Add</Button>
             &nbsp;
-            {/* {<SubmitButton pendingText="Saving.." formAction={studentWelcome}>
+            {<SubmitButton name = "submit" pendingText="Saving.." formAction={studentWelcome}>
               Save
-            </SubmitButton>} */}
+            </SubmitButton>}
           </div>
         </div>
       </form>
