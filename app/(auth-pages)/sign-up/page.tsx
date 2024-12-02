@@ -19,7 +19,7 @@ export default function Signup({ searchParams }: { searchParams: Message }) {
     <>
       <form className="flex flex-col min-w-64 max-w-64 mx-auto">
         <h1 className="text-2xl font-medium">Sign up</h1>
-        <p className="text-sm text text-foreground">
+        <p className="text-sm text-foreground">
           Already have an account?{" "}
           <Link className="text-primary font-medium underline" href="/sign-in">
             Sign in
@@ -27,7 +27,12 @@ export default function Signup({ searchParams }: { searchParams: Message }) {
         </p>
         <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
           <Label htmlFor="email">Email</Label>
-          <Input name="email" placeholder="you@example.com" required />
+          <Input
+            name="email"
+            placeholder="you@example.com"
+            required
+            className="w-full bg-white border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+          />
           <Label htmlFor="password">Password</Label>
           <Input
             type="password"
@@ -35,6 +40,7 @@ export default function Signup({ searchParams }: { searchParams: Message }) {
             placeholder="Your password"
             minLength={6}
             required
+            className="w-full bg-white border-gray-300 focus:ring-blue-500 focus:border-blue-500"
           />
           <SubmitButton formAction={signUpAction} pendingText="Signing up...">
             Sign up

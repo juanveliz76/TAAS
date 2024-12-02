@@ -249,13 +249,13 @@ export async function getCourseDetails(course_code: string) {
 }
 
 export const getCourses = async () => {
-  const supabase = await createClient();
+  const supabase = createClient();
   try {
     const { data, error } = await supabase.from("courses").select();
     if (error) {
       throw error;
     }
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (error) {
     console.error("Error fetching courses:", error);
@@ -288,7 +288,7 @@ export async function toggleProfessorAssignment(
 ) {
   const supabase = createClient();
 
-  // Check if the row exists
+  // Check if the row exists in the professor_course table
   const { data: existingData, error: checkError } = await supabase
     .from("professor_course")
     .select()
@@ -311,8 +311,10 @@ export async function toggleProfessorAssignment(
       .eq("course_code", course_code)
       .eq("professor", professor);
 
-    if (deleteError)
+    if (deleteError) {
       console.error("Error removing assignment:", deleteError.message);
+      return;
+    }
   } else {
     // Row does not exist, so insert it
     console.log("ROW DOES NOT EXIST ----------------------");
@@ -320,8 +322,39 @@ export async function toggleProfessorAssignment(
       .from("professor_course")
       .insert({ course_code: course_code, professor: professor });
 
-    if (insertError)
+    if (insertError) {
       console.error("Error adding assignment:", insertError.message);
+      return;
+    }
+  }
+
+  // After assigning or unassigning, update the `has_professor` column in the courses table
+  const { data: professorsAssigned, error: professorsError } = await supabase
+    .from("professor_course")
+    .select()
+    .eq("course_code", course_code);
+
+  if (professorsError) {
+    console.error(
+      "Error fetching assigned professors:",
+      professorsError.message,
+    );
+    return;
+  }
+
+  const hasProfessor = professorsAssigned && professorsAssigned.length > 0;
+
+  // Update the `has_professor` field in the courses table
+  const { error: updateCourseError } = await supabase
+    .from("courses")
+    .update({ has_professor: hasProfessor })
+    .eq("course_code", course_code);
+
+  if (updateCourseError) {
+    console.error(
+      "Error updating course's has_professor column:",
+      updateCourseError.message,
+    );
   }
 }
 
@@ -538,4 +571,49 @@ export const fetchProfessorPreferencesAction = async (
   }
 
   return { hasPreferences: Boolean(data) };
+};
+
+/**
+ * Updates the semester value in the semester table.
+ * @param semester The new semester value to be set
+ * @returns A boolean indicating success or failure
+ */
+export const updateSemesterAction = async (thing: string): Promise<boolean> => {
+  const supabase = createClient();
+  try {
+    const { error } = await supabase
+      .from("semester")
+      .update({ semester: thing })
+      .eq("id", 1);
+
+    if (error) {
+      console.error("Error updating semester:", error);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error("Unexpected error updating semester:", err);
+    return false;
+  }
+};
+
+export const fetchCurrentSemesterAction = async (): Promise<string | null> => {
+  const supabase = createClient();
+  try {
+    const { data, error } = await supabase
+      .from("semester")
+      .select("semester")
+      .single();
+
+    if (error) {
+      console.error("Error fetching current semester:", error);
+      return null;
+    }
+
+    return data?.semester || null;
+  } catch (err) {
+    console.error("Unexpected error fetching current semester:", err);
+    return null;
+  }
 };

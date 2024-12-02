@@ -43,10 +43,13 @@ export default function ProfessorPreferencesPage({
 
     // Separate unassigned and merge preferences with assigned professors
     const unassignedProfs = allPreferences.filter(
-      (pref) => !assignedProfs.some((assigned) => assigned.professor === pref.professor)
+      (pref) =>
+        !assignedProfs.some((assigned) => assigned.professor === pref.professor)
     );
     const mergedAssigned = assignedProfs.map((assigned) => {
-      const preference = allPreferences.find((pref) => pref.professor === assigned.professor)?.preference;
+      const preference = allPreferences.find(
+        (pref) => pref.professor === assigned.professor
+      )?.preference;
       return { ...assigned, preference: preference || "N/A" };
     });
 
@@ -63,35 +66,55 @@ export default function ProfessorPreferencesPage({
   };
 
   if (!cc) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-lg font-medium text-gray-600">Loading...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Professor Assignment for Course: {cc}</h1>
+    <div className="container mx-auto p-8">
+      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
+        Professor Assignment for Course:{" "}
+        <span className="text-orange-500">{cc}</span>
+      </h1>
 
-      <div className="flex gap-8">
+      <div className="flex gap-12">
         {/* Unassigned Professors */}
-        <div className="w-1/2">
-          <h2 className="text-xl font-semibold mb-2">Unassigned Professors</h2>
-          <table className="min-w-full border border-gray-300">
-            <thead>
+        <div className="w-1/2 bg-white shadow rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            Unassigned Professors
+          </h2>
+          <table className="w-full border-collapse border border-gray-300">
+            <thead className="bg-gray-100">
               <tr>
-                <th className="py-2 px-4 border-b">Professor Email</th>
-                <th className="py-2 px-4 border-b">Preference Level</th>
-                <th className="py-2 px-4 border-b">Assign</th>
+                <th className="py-3 px-4 text-left text-gray-700 font-medium border-b">
+                  Professor Email
+                </th>
+                <th className="py-3 px-4 text-left text-gray-700 font-medium border-b">
+                  Preference Level
+                </th>
+                <th className="py-3 px-4 text-left text-gray-700 font-medium border-b">
+                  Assign
+                </th>
               </tr>
             </thead>
             <tbody>
               {unassigned.map((prof) => (
-                <tr key={prof.professor}>
-                  <td className="py-2 px-4 border-b">{prof.professor}</td>
-                  <td className="py-2 px-4 border-b">{prof.preference}</td>
-                  <td className="py-2 px-4 border-b">
+                <tr
+                  key={prof.professor}
+                  className="odd:bg-white even:bg-gray-50"
+                >
+                  <td className="py-3 px-4 border-b">{prof.professor}</td>
+                  <td className="py-3 px-4 border-b">{prof.preference}</td>
+                  <td className="py-3 px-4 border-b">
                     <Button
                       onClick={() => handleAssignToggle(prof.professor)}
-                    className="bg-green-500 text-white hover:bg-green-600"
-                    >Assign</Button>
+                      className="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition"
+                    >
+                      Assign
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -100,26 +123,39 @@ export default function ProfessorPreferencesPage({
         </div>
 
         {/* Assigned Professors */}
-        <div className="w-1/2">
-          <h2 className="text-xl font-semibold mb-2">Assigned Professors</h2>
-          <table className="min-w-full border border-gray-300">
-            <thead>
+        <div className="w-1/2 bg-white shadow rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            Assigned Professors
+          </h2>
+          <table className="w-full border-collapse border border-gray-300">
+            <thead className="bg-gray-100">
               <tr>
-                <th className="py-2 px-4 border-b">Professor Email</th>
-                <th className="py-2 px-4 border-b">Preference Level</th>
-                <th className="py-2 px-4 border-b">Remove</th>
+                <th className="py-3 px-4 text-left text-gray-700 font-medium border-b">
+                  Professor Email
+                </th>
+                <th className="py-3 px-4 text-left text-gray-700 font-medium border-b">
+                  Preference Level
+                </th>
+                <th className="py-3 px-4 text-left text-gray-700 font-medium border-b">
+                  Remove
+                </th>
               </tr>
             </thead>
             <tbody>
               {assigned.map((prof) => (
-                <tr key={prof.professor}>
-                  <td className="py-2 px-4 border-b">{prof.professor}</td>
-                  <td className="py-2 px-4 border-b">{prof.preference}</td>
-                  <td className="py-2 px-4 border-b">
+                <tr
+                  key={prof.professor}
+                  className="odd:bg-white even:bg-gray-50"
+                >
+                  <td className="py-3 px-4 border-b">{prof.professor}</td>
+                  <td className="py-3 px-4 border-b">{prof.preference}</td>
+                  <td className="py-3 px-4 border-b">
                     <Button
                       onClick={() => handleAssignToggle(prof.professor)}
-                      className="bg-red-500 text-white hover:bg-red-600"
-                    >Remove</Button>
+                      className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
+                    >
+                      Remove
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -128,12 +164,14 @@ export default function ProfessorPreferencesPage({
         </div>
       </div>
 
-      <button
-        onClick={() => router.push(`/manager/${cc}`)}
-        className="mt-6 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-      >
-        Go Back
-      </button>
+      <div className="flex justify-center mt-8">
+        <button
+          onClick={() => router.push(`/manager/${cc}`)}
+          className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
+        >
+          Go Back
+        </button>
+      </div>
     </div>
   );
 }
