@@ -5,33 +5,25 @@ import Link from "next/link";
 
 // Sample list of classes to choose from
 const classes = [
-  "CS101 - Computer Programming 1",
-  "CS102 - Computer Programming 2",
-  "CS201 - Data Structures & Algorithms",
-  "CS301 - Info Systems and Database Fundamentals",
-  "CS401 - Operating Systems",
-  "CS402 - Computer Networks Fundamentals",
-  "CS403 - Artificial Intelligence",
-  "CS404 - Machine Learning",
+  "CEN 3031 - Introduction to Software Engineering",
+  "CIS 4301 - Information and Database Systems 1",
+  "COP 3502C - Programming Fundamentals 1",
+  "COP 3503C - Programming Fundamentals 2",
+  "MAS 3114 - Computational Linear Algebra",
+  "COP 4600 - Operating Systems",
+  "STA 3032 - Engineering Statistics",
+  "COP 4020 - Programming Language Concepts",
 ];
 
 export default function SelectClasses() {
   const [selectedClasses, setSelectedClasses] = useState<string[]>(new Array(8).fill(""));
-  const [rankings, setRankings] = useState<number[]>(new Array(8).fill(0));
-  const [submitted, setSubmitted] = useState(false); // New state to track submission
+  const [preferences, setPreferences] = useState<string[]>(new Array(8).fill(""));
+  const [submitted, setSubmitted] = useState(false);
 
   // Helper to determine which classes are available (i.e., not yet chosen)
   const availableClasses = (currentIndex: number) => {
     const usedClasses = selectedClasses.filter((_, index) => index !== currentIndex);
     return classes.filter((cls) => !usedClasses.includes(cls));
-  };
-
-  // Helper to determine which rankings are available (i.e., not yet chosen)
-  const availableRankings = (currentIndex: number) => {
-    const usedRankings = rankings.filter((_, index) => index !== currentIndex);
-    return Array.from({ length: 8 }, (_, i) => i + 1).filter(
-      (rank) => !usedRankings.includes(rank)
-    );
   };
 
   const handleClassChange = (index: number, value: string) => {
@@ -40,43 +32,39 @@ export default function SelectClasses() {
     setSelectedClasses(updatedClasses);
   };
 
-  const handleRankingChange = (index: number, value: string) => {
-    const updatedRankings = [...rankings];
-    updatedRankings[index] = parseInt(value);
-    setRankings(updatedRankings);
+  const handlePreferenceChange = (index: number, value: string) => {
+    const updatedPreferences = [...preferences];
+    updatedPreferences[index] = value;
+    setPreferences(updatedPreferences);
   };
 
-  // Function to clear the selected class and ranking for a specific index
+  // Function to clear the selected class and preference for a specific index
   const handleClear = (index: number) => {
     const updatedClasses = [...selectedClasses];
-    const updatedRankings = [...rankings];
+    const updatedPreferences = [...preferences];
     updatedClasses[index] = "";
-    updatedRankings[index] = 0;
+    updatedPreferences[index] = "";
     setSelectedClasses(updatedClasses);
-    setRankings(updatedRankings);
+    setPreferences(updatedPreferences);
   };
 
-  // Check if all classes and rankings are filled to enable/disable the submit button
-  const isSubmitDisabled = selectedClasses.some((cls) => cls === "") || rankings.some((rank) => rank === 0);
+  // Check if all classes and preferences are filled to enable/disable the submit button
+  const isSubmitDisabled = selectedClasses.some((cls) => cls === "") || preferences.some((pref) => pref === "");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Here, you can make a request to save the user's selected classes and rankings
     console.log("Selected Classes:", selectedClasses);
-    console.log("Rankings:", rankings);
+    console.log("Preferences:", preferences);
 
-    // Set submission state to true to trigger redirect
     setSubmitted(true);
   };
 
-  // If the form has been submitted, render the redirect link
   if (submitted) {
-    // Redirect to confirmation page after a short delay
     setTimeout(() => {
-      window.location.href = "/professor/select-classes/confirm_submit"; // Redirect using window.location
-    }, 1000); // Delay for 1 second
-    return <p className="text-blue-500">Redirecting to confirmation...</p>; // Inform the user
+      window.location.href = "/professor/select-classes/confirm_submit";
+    }, 1000);
+    return <p className="text-blue-500">Redirecting to confirmation...</p>;
   }
 
   return (
@@ -116,25 +104,23 @@ export default function SelectClasses() {
                 </button>
               </div>
 
-              <label htmlFor={`ranking-${index}`} className="text-sm font-medium">
-                Rank (1 - 8)
+              <label htmlFor={`preference-${index}`} className="text-sm font-medium">
+                Preference
               </label>
               <div className="flex items-center gap-2">
                 <select
-                  id={`ranking-${index}`}
-                  value={rankings[index] || ""}
-                  onChange={(e) => handleRankingChange(index, e.target.value)}
+                  id={`preference-${index}`}
+                  value={preferences[index] || ""}
+                  onChange={(e) => handlePreferenceChange(index, e.target.value)}
                   className="p-2 border rounded-md flex-1"
                   required
                 >
                   <option value="" disabled>
-                    Select a ranking
+                    Select preference
                   </option>
-                  {availableRankings(index).map((rank) => (
-                    <option key={rank} value={rank}>
-                      {rank}
-                    </option>
-                  ))}
+                  <option value="Not Preferred">Not Preferred</option>
+                  <option value="Somewhat Preferred">Somewhat Preferred</option>
+                  <option value="Highly Preferred">Highly Preferred</option>
                 </select>
                 <button
                   type="button"

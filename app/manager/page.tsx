@@ -10,17 +10,10 @@ export default function ManagerPage() {
 
   const [courses, setCourses] = useState(null); // State to store the courses data
 
-  useEffect(() => {
-    // Fetch the courses data when the component mounts
-    const fetchData = async () => {
-      const coursesData = await getCourses();
-      setCourses(coursesData);
-    };
-    fetchData();
-  }, []);
 
   return (
     <div className="container mx-auto p-4">
+
       <h1 className="text-2xl font-bold mb-4">Manager Dashboard</h1>
       <div>
         <h2 className="text-xl font-semibold mb-2">Fall 2024: Courses</h2>
