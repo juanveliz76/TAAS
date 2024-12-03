@@ -72,8 +72,9 @@ export default function preferences() {
         </div>
         <div className="container text-center">
           <div className="d-flex justify-content-center">
+          <div className="flex justify-center bg-white-100">
             <Select name="select1" onValueChange={(e) => setC(e)}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] border-2 border-black-500 focus:ring-2 focus:ring-black-500 focus:outline-none bg-white">
                 <SelectValue placeholder="Select a course"/>
               </SelectTrigger>
               <SelectContent>
@@ -106,8 +107,9 @@ export default function preferences() {
               </SelectContent>
             </Select>
             <br></br>
+            &nbsp;
             <Select name="select2" onValueChange={(e2) => setR(e2)}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] border-2 border-black-500 focus:ring-2 focus:ring-black-500 focus:outline-none bg-white">
                 <SelectValue placeholder="Select a preference level" />
               </SelectTrigger>
               <SelectContent>
@@ -118,10 +120,11 @@ export default function preferences() {
                 </SelectGroup>
               </SelectContent>
             </Select>
+            </div>
             <br></br>
-            <Button name = "add" formAction={add}>Add</Button>
+            <Button className="border-2 border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" name = "add" formAction={add}>Add</Button>
             &nbsp;
-            {<SubmitButton name = "submit" pendingText="Saving.." formAction={studentWelcome}>
+            {<SubmitButton className="border-2 border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" name = "submit" pendingText="Saving.." formAction={studentWelcome}>
               Save
             </SubmitButton>}
           </div>
