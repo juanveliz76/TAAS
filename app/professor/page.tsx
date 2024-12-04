@@ -1,23 +1,35 @@
 import Link from "next/link";
-import { selectClassesAction, selectTAsPreference , classesFilledOrNot} from "@/app/actions";
+import { selectClassesAction, selectTAsPreference } from "@/app/actions";
 import { SubmitButton } from "@/components/submit-button";
 
 export default function ProfessorLandingPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">Professor Dashboard</h1>
+      {/* Centered and styled dashboard title */}
+      <h1 className="text-4xl font-bold text-blue-500 mb-8 text-center">
+        Professor Dashboard
+      </h1>
 
-      <div className="flex flex-col gap-4">
+      {/* Button container */}
+      <div className="flex flex-col gap-6">
         {/* Button to pick preferred classes for next year */}
         <Link href="/professor/select-classes">
-          <SubmitButton formAction={selectClassesAction} pendingText="Loading...">
+          <SubmitButton
+            formAction={selectClassesAction}
+            pendingText="Loading..."
+            className="bg-blue-500 text-white px-6 py-3 text-lg rounded hover:bg-blue-600 transition"
+          >
             Pick Preferred Classes for Next Year
           </SubmitButton>
         </Link>
 
         {/* Button to pick preferred TAs for current classes */}
         <Link href="/professor/select-TA-preference">
-          <SubmitButton formAction={selectTAsPreference} pendingText="Loading...">
+          <SubmitButton
+            formAction={selectTAsPreference}
+            pendingText="Loading..."
+            className="bg-blue-500 text-white px-6 py-3 text-lg rounded hover:bg-blue-600 transition"
+          >
             Pick Preferred TAs for Current Classes
           </SubmitButton>
         </Link>
