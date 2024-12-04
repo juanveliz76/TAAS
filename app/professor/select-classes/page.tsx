@@ -98,13 +98,13 @@ export default function SelectClasses() {
   return (
     <div className="bg-blue-500 min-h-screen flex items-center justify-center">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-6 text-center">Select and Rank Classes</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center text-orange-500">Select and Rank Classes</h1>
 
         <div className="flex flex-col gap-4">
           {Array.from({ length: courses.length }, (_, index) => (
             <div key={index} className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
-                <label htmlFor={`class-${index}`} className="text-lg font-medium flex-1">
+                <label htmlFor={`class-${index}`} className="text-lg font-medium flex-1 text-orange-500">
                   Class {index + 1}
                 </label>
                 {selectedCourses[index] && (
@@ -122,35 +122,45 @@ export default function SelectClasses() {
                 id={`class-${index}`}
                 value={selectedCourses[index] || ""}
                 onChange={(e) => handleCourseChange(index, e.target.value)}
-                className="p-2 border rounded-md flex-1"
+                className={`p-2 border-2 border-blue-500 rounded-md flex-1 ${
+                  selectedCourses[index] ? "text-orange-500" : "text-black"
+                }`}
                 required
               >
-                <option value="" disabled>
+                <option value="" disabled className="text-black">
                   Select a course
                 </option>
                 {availableCourses(index).map((course) => (
-                  <option key={course.course_code} value={course.course_code}>
+                  <option key={course.course_code} value={course.course_code} className="text-orange-500">
                     {course.course_code}
                   </option>
                 ))}
               </select>
 
-              <label htmlFor={`preference-${index}`} className="text-sm font-medium">
+              <label htmlFor={`preference-${index}`} className="text-sm font-medium text-orange-500">
                 Preference
               </label>
               <select
                 id={`preference-${index}`}
                 value={preferences[index] || ""}
                 onChange={(e) => handlePreferenceChange(index, e.target.value)}
-                className="p-2 border rounded-md flex-1"
+                className={`p-2 border-2 border-blue-500 rounded-md flex-1 ${
+                  preferences[index] ? "text-orange-500" : "text-black"
+                }`}
                 required
               >
-                <option value="" disabled>
+                <option value="" disabled className="text-black">
                   Select preference
                 </option>
-                <option value="Not Preferred">Not Preferred</option>
-                <option value="Somewhat Preferred">Somewhat Preferred</option>
-                <option value="Highly Preferred">Highly Preferred</option>
+                <option value="Not Preferred" className="text-orange-500">
+                  Not Preferred
+                </option>
+                <option value="Somewhat Preferred" className="text-orange-500">
+                  Somewhat Preferred
+                </option>
+                <option value="Highly Preferred" className="text-orange-500">
+                  Highly Preferred
+                </option>
               </select>
             </div>
           ))}
